@@ -18,7 +18,7 @@ Simply copy your sql files into /docker-entrypoing-initdb and they will be execu
 You can also just use this image and bind the sql scripts from the host:
 
 ```
-docker run -v your-sql-init-folder:/docker-entrypoing-initdb/ -p 1433:1433 -d horizoncrafts/mssql-with-initdb
+docker run -v your-sql-init-folder:/docker-entrypoint-initdb.d/ -p 1433:1433 -d horizoncrafts/mssql-with-initdb
 ```
 
 Or, in docker-compose yaml file:
@@ -33,10 +33,24 @@ mssql:
       - type: bind
         source: your-sql-init-folder
         target: /docker-entrypoint-initdb.d/
+      - type: bind
+        source: your-persistent-database-data-folder
+        target: /var/opt/mssql
     environment:
           ACCEPT_EULA: your-EULA-acceptance-Y-or-N
-          SA_PASSWORD: example
+          SA_PASSWORD: aStrongPassword
 ```
+this example additionally shows how to attain data persistency. However, note that this combination usually makes sens only for the first time when `your-persistent-database-data-folder` is not yet initialized. After that you would rather not put anything in `/docker-entrypoint-initdb.d`. 
+When on macOS and mounting such a volume I usually add `consistency: delegated`. That - at least for me - increases the database performce at the expance of the speed of synchronisation between container and host. Read more: 
+- https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-docker?view=sql-server-2017#persist
+- https://docs.docker.com/docker-for-mac/osxfs-caching/ 
+
+# Details
+
+## What happens inside?
+
+1. There are series of commands put to sleep for `$MSSQL_SLEEP_TIME` seconds. When eventually activated after the sleep, these commands run each sql file found in `/docker-entrypoint-initdb.d` against the database (preassumingly running after `$MSSQL_SLEEP_TIME`)
+1. the sql server process is initiated immediately, so it can be ready for the sleeping commands.
 
 # Configuration
 
@@ -47,7 +61,7 @@ Check original image at https://hub.docker.com/_/microsoft-mssql-server
 
 The environment variables introduced by this instance:
 
-- `MSSQL_SLEEP_TIME` - default value 20
+- `MSSQL_SLEEP_TIME` - default value 20. 
 
 Regarding the SQL Server specific variables, check https://hub.docker.com/_/microsoft-mssql-server
 
