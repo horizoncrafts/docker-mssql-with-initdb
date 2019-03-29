@@ -32,7 +32,7 @@ mssql:
     volumes:
       - type: bind
         source: your-sql-init-folder
-        target: /docker-entrypoing-initdb/
+        target: /docker-entrypoint-initdb.d/
     environment:
           ACCEPT_EULA: your-EULA-acceptance-Y-or-N
           SA_PASSWORD: example
