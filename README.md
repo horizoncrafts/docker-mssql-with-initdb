@@ -47,7 +47,10 @@ When on macOS and mounting such a volume I usually add `consistency: delegated`.
 
 # Details
 
-## What happens inside?
+[Original documentation](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-bash)
+
+
+## What additionally happens inside this image?
 
 1. There are series of commands put to sleep for `$MSSQL_SLEEP_TIME` seconds. When eventually activated after the sleep, these commands run each sql file found in `/docker-entrypoint-initdb.d` against the database (preassumingly running after `$MSSQL_SLEEP_TIME`)
 1. the sql server process is initiated immediately, so it can be ready for the sleeping commands.
