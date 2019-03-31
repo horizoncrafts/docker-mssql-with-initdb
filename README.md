@@ -5,6 +5,9 @@ A Docker image based on Ms' with initdb feature
 A Docker image based on "Microsoft SQL Server" by Microsoft with initdb added.
 
 # Usage
+
+## The Server
+
 This Docker image is designed to do the same as the origianl SQL Server image (https://hub.docker.com/_/microsoft-mssql-server), additionaly enabling you to provide the database initialization scripts in a convenient manner.
 
 Simply copy your sql files into /docker-entrypoing-initdb and they will be executed in lexicografical order during container startup (`docker run`), not during image build time!
@@ -45,6 +48,15 @@ When on macOS and mounting such a volume I usually add `consistency: delegated`.
 - https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-docker?view=sql-server-2017#persist
 - https://docs.docker.com/docker-for-mac/osxfs-caching/ 
 
+## The command line tool
+
+There are plenty of lighter `sqlcmd` images available on dockerhub. However, if you already use this one you can "exec into" the running container and invoke `sqlcmd` (the PATH env is extended with `/opt/mssql-tools/bin`). You can also use provided function of running the container as a command, for example:
+```
+docker run -rm --link from_image_name:to_host_name horizoncrafts/mssql-with-initdb sqlcmd -S sa -U yourStrongOne -Q "GO"
+```
+
+Skip the link `--link from_image_name:to_host_name` part if you don't want to connect to a container. Use `-it` docker option and skip `-Q "GO"` sqlcmd part to enter interactive mode.
+
 # Details
 
 [Original documentation](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-bash)
@@ -52,8 +64,9 @@ When on macOS and mounting such a volume I usually add `consistency: delegated`.
 
 ## What additionally happens inside this image?
 
-1. There are series of commands put to sleep for `$MSSQL_SLEEP_TIME` seconds. When eventually activated after the sleep, these commands run each sql file found in `/docker-entrypoint-initdb.d` against the database (preassumingly running after `$MSSQL_SLEEP_TIME`)
-1. the sql server process is initiated immediately, so it can be ready for the sleeping commands.
+1. There are series of commands put to execute in background. The loop checks once in `$MSSQL_SLEEP_TIME` (default 1 second) if the server is accessible. When that happens, each sql file found in `/docker-entrypoint-initdb.d` is executed against the database.
+1. The sql server process is initiated immediately, so it can be ready for the sleeping commands.
+1. If instead of `sqlservr` other command is specified, in particular `sqlcmd`, it is just executed. The server is not started, no init scripts executed in loop.
 
 # Configuration
 
@@ -64,7 +77,7 @@ Check original image at https://hub.docker.com/_/microsoft-mssql-server
 
 The environment variables introduced by this instance:
 
-- `MSSQL_SLEEP_TIME` - default value 20. 
+- `MSSQL_SLEEP_TIME` - default value 1
 
 Regarding the SQL Server specific variables, check https://hub.docker.com/_/microsoft-mssql-server
 
