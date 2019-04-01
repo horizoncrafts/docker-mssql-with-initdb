@@ -16,7 +16,7 @@ if [ "$1" = 'sqlservr' ]; then
 	  done && \
 	  echo "INFO: ${BASH_SOURCE} Database custom initialization completed" ) &
 
-elif [ "$1" ne 'sqlcmd' ]; then
+elif [ "$1" -ne 'sqlcmd' ]; then
 
 	echo "WARN: ${BASH_SOURCE}: Supported commands are sqlservr (default) or sqlcmd"
 fi
