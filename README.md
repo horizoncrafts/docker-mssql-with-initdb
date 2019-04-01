@@ -54,7 +54,7 @@ When on macOS and mounting such a volume I usually add `consistency: delegated`.
 
 There are plenty of lighter `sqlcmd` images available on dockerhub. However, if you already use this one you can "exec into" the running container and invoke `sqlcmd` (the PATH env is extended with `/opt/mssql-tools/bin`). You can also use provided function of running the container as a command, for example:
 ```
-docker run -rm --link from_image_name:to_host_name horizoncrafts/mssql-with-initdb sqlcmd -S sa -U yourStrongOne -Q "select 'Hello World'"
+docker run -rm --link from_image_name:to_host_name horizoncrafts/mssql-with-initdb sqlcmd -S to_host_name -U sa -P yourStrongOne -Q "select 'Hello World'"
 ```
 
 Skip the link `--link from_image_name:to_host_name` part if you don't want to connect to a local container. Use `-it` docker option and skip `-Q "select 'Hello World'"` sqlcmd part to enter interactive mode.
