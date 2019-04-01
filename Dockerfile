@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/mssql/server:2017-CU8-ubuntu
+FROM mcr.microsoft.com/mssql/server:2019-CTP2.2-ubuntu
 
 ENV PATH /opt/mssql-tools/bin:/opt/mssql/bin:$PATH
 
