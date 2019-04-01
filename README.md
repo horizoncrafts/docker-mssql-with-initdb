@@ -1,5 +1,7 @@
-# mssql-with-initdb
-A Docker image based on Ms' with initdb feature
+# Tags
+
+- `2017-CU8-ubuntu` `latest` [master](https://github.com/horizoncrafts/docker-mssql-with-initdb)
+- `2019-CTP2.2-ubuntu` [2019-CTP2.2-ubuntu branch](https://github.com/horizoncrafts/docker-mssql-with-initdb/tree/2019-CTP2.2-ubuntu)
 
 # About this image
 A Docker image based on "Microsoft SQL Server" by Microsoft with initdb added.
